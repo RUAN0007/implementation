@@ -1,6 +1,7 @@
 import os
 import yaml
 import click
+import time
 
 from orpheus.core.executor import Executor
 from orpheus.core.user_control import UserManager
@@ -123,9 +124,12 @@ def init(ctx, input_file, dataset, table_name, schema):
     #    1.1 Load a csv or other format of the file into DB
     #    1.2 Schema
     # 2.add version control on a existing table in DB
+    begin = time.time()
     executor = Executor(ctx.obj)
     conn = DatabaseManager(ctx.obj)
     executor.exec_init(input_file, dataset, table_name, schema, conn)
+    end = time.time()
+    print "\nInit Latency: %0.3f ms\n" % ((end - begin) * 1000.0)
 
 @cli.command()
 @click.argument('dataset')
@@ -184,11 +188,15 @@ def run(ctx, sql):
     # TODO: add finer grained try-catch for SQLParser
     try:
         # execute_sql_line(ctx, sql)
+        begin = time.time()
         conn = DatabaseManager(ctx.obj)
         parser = SQLParser(conn)
         executable_sql = parser.parse(sql)
         # print executable_sql
         conn.execute_sql(executable_sql)
+        end = time.time()
+        print "\nRun Latency: %0.3f ms\n" % ((end - begin) * 1000.0)
+
 
     except Exception as e:
         import traceback
@@ -205,9 +213,12 @@ def run(ctx, sql):
 @click.option('--ignore/--no-ignore', default=False, help='If set, checkout versions into table will ignore duplicated key')
 @click.pass_context
 def checkout(ctx, dataset, vlist, to_table, to_file, delimiters, header, ignore):
+    begin = time.time()
     conn = DatabaseManager(ctx.obj)
     executor = Executor(ctx.obj)
     executor.exec_checkout(dataset, vlist, to_table, to_file, delimiters, header, ignore, conn)
+    end = time.time()
+    print "\nCheckout Latency: %0.3f ms\n" % ((end - begin) * 1000.0)
 
 
 @cli.command()
@@ -218,10 +229,12 @@ def checkout(ctx, dataset, vlist, to_table, to_file, delimiters, header, ignore)
 @click.option('--header', '-h', is_flag=True, help="If set, the first line of checkout file will be the header")
 @click.pass_context
 def commit(ctx, msg, table_name, file_name, delimiters, header):
-
+    begin = time.time()
     conn = DatabaseManager(ctx.obj)
     executor = Executor(ctx.obj)
     executor.exec_commit(msg, table_name, file_name, delimiters, header, conn)
+    end = time.time()
+    print "\nCommit Latency: %0.3f ms\n" % ((end - begin) * 1000.0)
 
 @cli.command()
 @click.pass_context

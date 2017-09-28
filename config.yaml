@@ -3,7 +3,8 @@ host: localhost
 port: 5432
 
 # Orpheus Home dir
-orpheus_home: #Please specify the Orpheus home directory
+orpheus_home: /data/ruanpc/implementation
+#Please specify the Orpheus home directory
 
 # Meta dir 
 # TODO: hide them under orpheus_home

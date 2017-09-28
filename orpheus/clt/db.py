@@ -23,7 +23,8 @@ class DatabaseManager():
             self.home = config['orpheus_home']
             self.currentDB = config['database']
             self.user = config['user']
-            self.password = config['passphrase']
+            # self.password = config['passphrase']
+            self.password = "password"
             self.connect_str = "host=" + self.config['host'] + " port=" + str(self.config['port']) + " dbname=" + self.currentDB + " user=" + self.user + " password=" + self.password
             self.connect_db()
         except KeyError as e:
